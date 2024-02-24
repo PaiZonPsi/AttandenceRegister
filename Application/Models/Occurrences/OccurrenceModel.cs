@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Application.Models.Occurence;
+namespace Application.Models.Occurrences;
 
-public class OccurenceModel
+public class OccurrenceModel
 {
     [NotNull] [MaxLength(200)] 
     public string Title { get; set; } = default!;

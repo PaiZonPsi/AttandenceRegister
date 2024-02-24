@@ -1,4 +1,4 @@
-﻿namespace Application.Models.Attendance;
+﻿namespace Application.Models.Attendances;
 
 public class DeleteAttendanceModel
 {
