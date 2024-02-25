@@ -6,7 +6,6 @@ namespace Domain.Entities;
 
 public class Occurrence : BaseEntity
 {
-    public int Id { get; set; }
     [NotNull] [MaxLength(200)] 
     public string Title { get; set; } = default!;
     [NotNull]
