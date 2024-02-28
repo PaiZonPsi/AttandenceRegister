@@ -13,4 +13,33 @@
       <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.2" />
+      <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.9.0-3.final" />
+      <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="4.9.0-3.final" />
+      <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.9.0-3.final" />
+      <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.9.0-3.final" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.2" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.2">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.1" />
+      <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+      <PackageReference Include="Telerik.UI.for.AspNet.Core.Trial" Version="2024.1.130" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="wwwroot\lib\kendo-ui\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Pages\AttendanceEmployee.cshtml" />
+      <_ContentIncludedByDefault Remove="Pages\EmployeesView.cshtml" />
+      <_ContentIncludedByDefault Remove="Pages\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Pages\Shared\_Layout.cshtml" />
+      <_ContentIncludedByDefault Remove="Pages\SimpleIndex.cshtml" />
+      <_ContentIncludedByDefault Remove="Pages\_ViewImports.cshtml" />
+    </ItemGroup>
+
 </Project>
