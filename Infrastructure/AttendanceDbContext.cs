@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure;
@@ -19,8 +20,11 @@ public class AttendanceDbContext : DbContext
         
     }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        optionsBuilder.UseSqlServer("Server=.\\SQLExpress;Database=RegisterDatabase;Trusted_Connection=Yes;TrustServerCertificate=true;\n");
+        base.OnModelCreating(modelBuilder);
+        
+        modelBuilder.SeedEmployees();
+        modelBuilder.SeedOccurrences();
     }
 }
