@@ -9,7 +9,6 @@ public class EmployeeValidator : AbstractValidator<EmployeeModel>
         RuleFor(model => model.FirstName).NotNull().MaximumLength(200);
         RuleFor(model => model.LastName).NotNull().MaximumLength(200);
         RuleFor(model => model.Email).NotNull().EmailAddress().MaximumLength(200);
-        RuleFor(model => model.PhoneNumber).NotNull().MaximumLength(9);
-        
+        RuleFor(model => model.PhoneNumber).NotNull().MaximumLength(9).MinimumLength(9);
     }
 }

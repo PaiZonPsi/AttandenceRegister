@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AttendanceRegister", "AttendanceRegister\AttendanceRegister.csproj", "{051FE070-50E6-4707-A821-E2A5CF080FB9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebUI", "WebUI\WebUI.csproj", "{051FE070-50E6-4707-A821-E2A5CF080FB9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{FD115043-EC23-49F1-8A00-DE0F5476BEA5}"
 EndProject

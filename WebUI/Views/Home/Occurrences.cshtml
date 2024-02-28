@@ -1,0 +1,34 @@
+﻿@using Kendo.Mvc.UI
+
+@{
+    Layout = "_Layout";
+}
+
+    <div class="text-center">
+        <h2>Occurrences</h2>
+        @(Html.Kendo().Grid<Application.Models.Occurrences.OccurrenceModel>()
+            .Name("grid")
+            .Columns(columns =>
+            {
+                columns.Bound(c => c.Id).Hidden();
+                columns.Bound(c => c.Title).Width(300);
+                columns.Bound(c => c.Active).Width(300);
+            })
+            .ToolBar(toolbar =>
+            {
+                toolbar.Create();
+                toolbar.Save();
+            })
+            .Editable(editable => editable.Mode(GridEditMode.InCell))
+            .DataSource(dataSource => dataSource
+                .Custom()
+                .Transport(transport =>
+                {
+                    transport.Read(read => read.Action("GetOccurrences", "Occurrence"));
+                    transport.Create(post => post.Action("PostOccurrence", "Occurrence"));
+                    transport.Update(update => update.Action("PutOccurrence", "Occurrence"));
+                })
+                .Schema(schema => schema.Data("Data"))
+                
+            ))
+    </div>

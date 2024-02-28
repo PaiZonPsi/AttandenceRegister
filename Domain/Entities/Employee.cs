@@ -6,7 +6,6 @@ namespace Domain.Entities;
 
 public class Employee : BaseEntity
 {
-    public int Id { get; set; }
     [NotNull] [MaxLength(200)] 
     public string FirstName { get; set; } = default!;
     [NotNull] [MaxLength(200)] 

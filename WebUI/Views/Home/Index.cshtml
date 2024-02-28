@@ -1,0 +1,36 @@
+﻿@using Kendo.Mvc.UI
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+    <div class="text-center">
+        <h2>Employees</h2>
+        @(Html.Kendo().Grid<Application.Models.Employees.EmployeeModel>()
+            .Name("grid")
+            .Columns(columns =>
+            {
+                columns.Bound(c => c.Id).Hidden();
+                columns.Bound(c => c.FirstName).Width(300);
+                columns.Bound(c => c.LastName).Width(300);
+                columns.Bound(c => c.Email).Width(200);
+                columns.Bound(c => c.PhoneNumber).Width(200);
+            })
+            .ToolBar(toolbar =>
+            {
+                toolbar.Create();
+                toolbar.Save();
+            })
+            .Editable(editable => editable.Mode(GridEditMode.InCell))
+            .DataSource(dataSource => dataSource
+                .Custom()
+                .Transport(transport =>
+                {
+                    transport.Read(read => read.Action("GetEmployees", "Home"));
+                    transport.Create(post => post.Action("PostEmployee", "Home"));
+                    transport.Update(update => update.Action("PutEmployee", "Home"));
+                })
+                .Schema(schema => schema.Data("Data"))
+                
+            ))
+    </div>
