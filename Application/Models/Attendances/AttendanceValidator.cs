@@ -9,7 +9,7 @@ public class AttendanceValidator : AbstractValidator<AttendanceModel>
         RuleFor(model => model.Description).MaximumLength(500);
         RuleFor(model => model.OccurrenceStartDate).NotNull();
         RuleFor(model => model.OccurrenceEndDate).NotNull();
-        RuleFor(model => model.Employee).NotNull();
-        RuleFor(model => model.Occurrence).NotNull();
+        RuleFor(model => model.EmployeeId).NotNull();
+        RuleFor(model => model.OccurrenceId).NotNull();
     }
 }
