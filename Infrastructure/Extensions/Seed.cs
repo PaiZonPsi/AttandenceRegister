@@ -3,14 +3,24 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Extensions;
 
-public static class SeedingExtension
+public class Seed
 {
-    public static ModelBuilder SeedEmployees(this ModelBuilder modelBuilder)
+    private readonly AttendanceDbContext _context;
+
+    public Seed(AttendanceDbContext context)
     {
-        modelBuilder.Entity<Employee>().HasData(
+        _context = context;
+    }
+    
+    public void SeedEmployees()
+    {
+        if(_context.Employees.Any() == true)
+            return;
+        
+        var employees = new List<Employee>()
+        {
             new Employee()
             {
-                Id = 1,
                 FirstName = "James",
                 LastName = "Jameson",
                 Email = "jj@jj.com",
@@ -18,7 +28,6 @@ public static class SeedingExtension
             },
             new Employee()
             {
-                Id = 2,
                 FirstName = "Adam",
                 LastName = "Adams",
                 Email = "aa@aa.com",
@@ -26,38 +35,39 @@ public static class SeedingExtension
             },
             new Employee()
             {
-                Id = 3,
                 FirstName = "Bob",
                 LastName = "Baker",
                 Email = "bobby@baker.com",
                 PhoneNumber = "198276122"
             }
-        );
-        return modelBuilder;
+        };
+        _context.Employees.AddRange(employees);
+        _context.SaveChanges();
     }
 
-    public static ModelBuilder SeedOccurrences(this ModelBuilder modelBuilder)
+    public void SeedOccurrences()
     {
-        modelBuilder.Entity<Occurrence>().HasData(
+        if(_context.Occurrences.Any() == true)
+            return;
+        var occurrences = new List<Occurrence>()
+        {
             new Occurrence()
             {
-                Id = 1,
                 Title = "L4",
                 Active = false
             },
             new Occurrence()
             {
-                Id = 2,
                 Title = "Vacation",
                 Active = false
             },
             new Occurrence()
             {
-                Id = 3,
                 Title = "Unjustified",
                 Active = false
             }
-        );
-        return modelBuilder;
+        };
+        _context.Occurrences.AddRange(occurrences);
+        _context.SaveChanges();
     }
 }

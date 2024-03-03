@@ -7,6 +7,6 @@ public class AttendanceMappingProfile : Profile
 {
     public AttendanceMappingProfile()
     {
-        CreateMap<Attendance, AttendanceModel>().ReverseMap();
+        CreateMap<Attendance, AttendanceModel>();
     }
 }

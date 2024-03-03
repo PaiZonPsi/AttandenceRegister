@@ -1,5 +1,4 @@
 ﻿using Domain.Entities;
-using Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure;
@@ -18,13 +17,5 @@ public class AttendanceDbContext : DbContext
     public AttendanceDbContext(DbContextOptions<AttendanceDbContext> options) : base(options)
     {
         
-    }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        base.OnModelCreating(modelBuilder);
-        
-        modelBuilder.SeedEmployees();
-        modelBuilder.SeedOccurrences();
     }
 }
