@@ -23,6 +23,11 @@ public class OccurrenceController : Controller
         _validator = validator;
     }
     
+    public IActionResult Occurrences()
+    {
+        return View();
+    }
+    
     public async Task<ActionResult> GetOccurrences([DataSourceRequest] DataSourceRequest request)
     {
         var dataSourceResultTask = (await _repository.GetAllAsync()).ToDataSourceResultAsync(request);

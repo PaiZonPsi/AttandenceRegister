@@ -31,8 +31,11 @@ public class HomeController : Controller
     [AcceptVerbs("Get")]
     public async Task<IActionResult> GetEmployees([DataSourceRequest]DataSourceRequest request)
     {
-        var dataSourceResultTask = (await _repository.GetAllAsync()).ToDataSourceResultAsync(request);
-        return Json(await dataSourceResultTask);
+        var employees = await _repository.GetAllAsync();
+        var employeesDtos = _mapper.Map<IEnumerable<EmployeeModel>>(employees);
+        var result = await employeesDtos.ToDataSourceResultAsync(request);
+        
+        return Json(result);
     }
 
     public async Task<IActionResult> PostEmployee(EmployeeModel employeeModel, [DataSourceRequest] DataSourceRequest request)
@@ -67,15 +70,5 @@ public class HomeController : Controller
         }
         
         return BadRequest();
-    }
-
-    public IActionResult Occurrences()
-    {
-        return View();
-    }
-
-    public IActionResult Attendances()
-    {
-        return View();
     }
 }

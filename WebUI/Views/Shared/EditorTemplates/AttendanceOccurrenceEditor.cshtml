@@ -1,0 +1,16 @@
+﻿@using Kendo.Mvc.UI
+@(Html.Kendo().ComboBox()
+    .Name("Occurrence")
+    .DataValueField("Id")
+    .DataTextField("Title")
+    .DataSource(source =>
+    {
+        source
+            .Custom()
+            .Transport(transport => 
+                transport
+                    .Read(read => 
+                        read.Action("GetOccurrences", "Occurrence")))
+            .Schema(schema => schema.Data("Data"));
+
+    }))

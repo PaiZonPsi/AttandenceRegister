@@ -24,6 +24,11 @@ public class AttendanceController : Controller
         _validator = validator;
     }
 
+    public IActionResult Attendances()
+    {
+        return View();
+    }
+    
     public async Task<ActionResult> GetAttendances([DataSourceRequest] DataSourceRequest request)
     {
         var dataSourceResultTask = (await _repository.GetAllAsync()).ToDataSourceResultAsync(request);
