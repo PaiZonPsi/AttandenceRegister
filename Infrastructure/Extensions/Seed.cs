@@ -1,5 +1,4 @@
 ﻿using Domain.Entities;
-using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Extensions;
 
@@ -19,27 +18,9 @@ public class Seed
         
         var employees = new List<Employee>()
         {
-            new Employee()
-            {
-                FirstName = "James",
-                LastName = "Jameson",
-                Email = "jj@jj.com",
-                PhoneNumber = "314456908"
-            },
-            new Employee()
-            {
-                FirstName = "Adam",
-                LastName = "Adams",
-                Email = "aa@aa.com",
-                PhoneNumber = "132487762"
-            },
-            new Employee()
-            {
-                FirstName = "Bob",
-                LastName = "Baker",
-                Email = "bobby@baker.com",
-                PhoneNumber = "198276122"
-            }
+            new Employee("James", "Jameson", "jj@jj.com", "314456908"),
+            new Employee("Adam", "Adams", "aa@aa.com", "132487762"),
+            new Employee("Bob", "Baker", "bobby@baker.com", "198276122")
         };
         _context.Employees.AddRange(employees);
         _context.SaveChanges();

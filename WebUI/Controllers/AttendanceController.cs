@@ -37,6 +37,7 @@ public class AttendanceController : Controller
 
     public async Task<ActionResult<AttendanceModel>> PostAttendance([DataSourceRequest] DataSourceRequest request, AttendanceModel model)
     {
+        if (model.Id != 0) return BadRequest();
         var result = await _validator.ValidateAsync(model);
 
         if (result.IsValid == false)
