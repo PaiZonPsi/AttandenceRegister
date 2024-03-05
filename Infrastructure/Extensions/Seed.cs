@@ -32,21 +32,10 @@ public class Seed
             return;
         var occurrences = new List<Occurrence>()
         {
-            new Occurrence()
-            {
-                Title = "L4",
-                Active = false
-            },
-            new Occurrence()
-            {
-                Title = "Vacation",
-                Active = false
-            },
-            new Occurrence()
-            {
-                Title = "Unjustified",
-                Active = false
-            }
+            new Occurrence("L4", false),
+            new Occurrence("Vacation", false),
+            new Occurrence("Unjustified", false),
+            new Occurrence("Attended", true)
         };
         _context.Occurrences.AddRange(occurrences);
         _context.SaveChanges();

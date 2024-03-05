@@ -7,6 +7,6 @@ public class OccurrenceMappingProfile : Profile
 {
     public OccurrenceMappingProfile()
     {
-        CreateMap<Occurrence, OccurrenceModel>().ReverseMap();
+        CreateMap<Occurrence, OccurrenceModel>();
     }
 }
