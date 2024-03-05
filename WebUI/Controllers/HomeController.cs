@@ -7,7 +7,6 @@ using FluentValidation.AspNetCore;
 using Kendo.Mvc.Extensions;
 using Kendo.Mvc.UI;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace AttendanceRegister.Controllers;
@@ -30,20 +29,18 @@ public class HomeController : Controller
         return View();
     }
 
-    [AcceptVerbs("Get")]
-    public async Task<IActionResult> GetEmployees([DataSourceRequest]DataSourceRequest request)
+    public async Task<IActionResult> GetEmployees([DataSourceRequest] DataSourceRequest request)
     {
         var employees = await _repository.GetAllAsync();
         var employeesDtos = _mapper.Map<IEnumerable<EmployeeModel>>(employees);
         var result = await employeesDtos.ToDataSourceResultAsync(request);
-        
-        return new ContentResult() {Content = JsonConvert.SerializeObject(result), ContentType = "application/json"};
+
+        var serializeObject = JsonConvert.SerializeObject(result);
+        return new ContentResult() {Content = serializeObject, ContentType = "application/json"};
     }
 
-    public async Task<IActionResult> PostEmployee([DataSourceRequest] DataSourceRequest request, EmployeeModel employeeModel)
+    public async Task<IActionResult> PostEmployee([DataSourceRequest] DataSourceRequest request, [FromForm] EmployeeModel employeeModel)
     {
-        //temp solution telerik return all the values from grid 
-        if (employeeModel.Id != 0) return BadRequest();
         var validationResult = await _validator.ValidateAsync(employeeModel);
         
         if (validationResult.IsValid == false)
@@ -55,10 +52,11 @@ public class HomeController : Controller
         var result = await new List<EmployeeModel> { _mapper.Map<EmployeeModel>(employeeEntity) }.ToDataSourceResultAsync(request);
         await _repository.CreateAsync(employeeEntity);
         await _repository.SaveChangesAsync();
-        return new ContentResult() {Content = JsonConvert.SerializeObject(result), ContentType = "application/json"};
+        var serializeObject = JsonConvert.SerializeObject(result);
+        return new ContentResult() {Content = serializeObject, ContentType = "application/json"};
     }
 
-    public async Task<IActionResult> PutEmployee(EmployeeModel employeeModel, [DataSourceRequest] DataSourceRequest request)
+    public async Task<IActionResult> PutEmployee([DataSourceRequest] DataSourceRequest request, [FromForm] EmployeeModel employeeModel)
     {
         var entityToUpdate = await _repository.GetByIdAsync(employeeModel.Id);
 
@@ -69,12 +67,10 @@ public class HomeController : Controller
         entityToUpdate.SetEmail(employeeModel.Email);
         entityToUpdate.SetPhoneNumber(employeeModel.PhoneNumber);
         
-        _repository.UpdateEntity(entityToUpdate);
-        
         if (await _repository.SaveChangesAsync() == true)
         {
-            var dataSourceResultTask = await (await _repository.GetAllAsync()).ToDataSourceResultAsync(request);
-            return new ContentResult() {Content = JsonConvert.SerializeObject(_mapper.Map<EmployeeModel>(entityToUpdate)), ContentType = "application/json"};
+            var dataSourceResult = await new List<EmployeeModel>(){_mapper.Map<EmployeeModel>(entityToUpdate)}.ToDataSourceResultAsync(request);
+            return new ContentResult() {Content = JsonConvert.SerializeObject(dataSourceResult), ContentType = "application/json"};
         }
         
         return BadRequest();

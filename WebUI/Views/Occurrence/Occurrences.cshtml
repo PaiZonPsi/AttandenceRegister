@@ -13,13 +13,13 @@
                 columns.Bound(c => c.Id).Hidden();
                 columns.Bound(c => c.Title).Width(300);
                 columns.Bound(c => c.Active).Width(300);
+                columns.Command(command => command.Edit());
             })
             .ToolBar(toolbar =>
             {
                 toolbar.Create();
-                toolbar.Save();
             })
-            .Editable(editable => editable.Mode(GridEditMode.InCell))
+            .Editable(editable => editable.Mode(GridEditMode.InLine))
             .DataSource(dataSource => dataSource
                 .Custom()
                 .Transport(transport =>
