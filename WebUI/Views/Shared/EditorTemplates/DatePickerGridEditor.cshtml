@@ -1,4 +1,7 @@
 ﻿@using Kendo.Mvc.UI
+@model DateTime
+
 @(Html.Kendo().DatePicker()
-    .Name("DatepickerEditor")
-    .Value(DateTime.Now))
+    .Name("DatePickerEditor")
+    .Value(DateTime.Now)
+    .Format("dd/MM/yyyy"))

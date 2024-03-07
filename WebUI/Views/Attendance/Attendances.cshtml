@@ -1,40 +1,41 @@
 ﻿@using Kendo.Mvc.UI
-@using Microsoft.EntityFrameworkCore.Metadata.Internal
 @model Application.Models.Attendances.AttendanceModel
 
 @{
     Layout = "_Layout";
+    ViewData["Title"] = "Attendances";
 }
 
 <div class="text-center">
-    <h2>Employees</h2>
+    <h2>Attendance Register</h2>
     @(Html.Kendo().Grid<Application.Models.Attendances.AttendanceModel>()
         .Name("grid")
         .Columns(columns =>
         {
-            //TODO: editor template
             columns.Bound(c => c.Id).Hidden();
             columns.Bound(c => c.Employee).EditorTemplateName("Employee");
             columns.Bound(c => c.Occurrence).EditorTemplateName("Occurrence");
             columns.Bound(c => c.Description);
-            columns.Bound(c => c.OccurrenceStartDate);
-            columns.Bound(c => c.OccurrenceEndDate);
-            columns.Command(command => command.Destroy());
+            columns.Bound(c => c.OccurrenceStartDate).Format("{0:dd/MM/yyyy}").EditorTemplateName("DatePickerEditor");
+            columns.Bound(c => c.OccurrenceEndDate).Format("{0:dd/MM/yyyy}").EditorTemplateName("DatePickerEditor");
+            columns.Command(command =>
+            {
+                command.Destroy();
+                command.Edit();
+            });
         })
         .ToolBar(toolbar =>
         {
             toolbar.Create();
-            toolbar.Save();
         })
         .Editable(editable => editable.Mode(GridEditMode.InLine))
         .DataSource(dataSource => dataSource
-            .Custom()
-            .Transport(transport =>
-            {
-                transport.Read(read => read.Action("GetAttendances", "Attendance"));
-                
-            })
-            .Schema(schema => schema.Data("Data"))
-                
-        ))
+            .Ajax()
+            .Model(model => model.Id(a => a.Id))
+            .Read(read => read.Action("GetAttendances", "Attendance"))
+            .Create(create => create.Action("PostAttendance", "Attendance"))
+            .Update(update => update.Action("PutAttendance", "Attendance"))
+            .Destroy(destroy => destroy.Action("DeleteAttendance", "Attendance"))
+            )
+        )
 </div>

@@ -46,6 +46,7 @@ public class HomeController : Controller
         if (validationResult.IsValid == false)
         {
             validationResult.AddToModelState(this.ModelState);
+            return ValidationProblem();
         }
         
         var employeeEntity = new Employee(employeeModel.FirstName, employeeModel.LastName, employeeModel.Email, employeeModel.PhoneNumber);

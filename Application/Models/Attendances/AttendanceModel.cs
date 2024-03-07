@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using Application.Models.Employees;
 using Application.Models.Occurrences;
 
@@ -15,7 +15,7 @@ public class AttendanceModel
     public OccurrenceModel? Occurrence { get; set; }
     public string? Description { get; set; }
     [UIHint("DatePickerGridEditor")]
-    public DateOnly OccurrenceStartDate { get; set; }
+    public DateTime OccurrenceStartDate { get; set; }
     [UIHint("DatePickerGridEditor")]
-    public DateOnly OccurrenceEndDate { get; set; }
+    public DateTime OccurrenceEndDate { get; set; }
 }
