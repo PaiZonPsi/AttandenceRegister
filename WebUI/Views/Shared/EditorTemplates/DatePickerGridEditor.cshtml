@@ -1,7 +1,9 @@
 ﻿@using Kendo.Mvc.UI
 @model DateTime
 
-@(Html.Kendo().DatePicker()
-    .Name("DatePickerEditor")
-    .Value(DateTime.Now)
-    .Format("dd/MM/yyyy"))
+
+<script type="text/javascript">
+kendo.culture("en-GB");
+</script>
+
+@(Html.Kendo().DatePickerFor(m => m).Value(DateTime.Today))

@@ -1,5 +1,6 @@
-﻿@using Kendo.Mvc.UI
-@model Application.Models.Attendances.AttendanceModel
+@using Kendo.Mvc.UI
+@using Application.Models.Attendances
+@model AttendanceModel
 
 @{
     Layout = "_Layout";
@@ -8,20 +9,20 @@
 
 <div class="text-center">
     <h2>Attendance Register</h2>
-    @(Html.Kendo().Grid<Application.Models.Attendances.AttendanceModel>()
+    @(Html.Kendo().Grid<AttendanceModel>()
         .Name("grid")
         .Columns(columns =>
         {
             columns.Bound(c => c.Id).Hidden();
-            columns.Bound(c => c.Employee).EditorTemplateName("Employee");
-            columns.Bound(c => c.Occurrence).EditorTemplateName("Occurrence");
+            columns.Bound(c => c.Employee).ClientTemplate("#=data.Employee != null ? Employee.FullName : '' #");
+            columns.Bound(c => c.Occurrence).ClientTemplate("#=data.Occurrence != null ? Occurrence.Title : '' #");
             columns.Bound(c => c.Description);
-            columns.Bound(c => c.OccurrenceStartDate).Format("{0:dd/MM/yyyy}").EditorTemplateName("DatePickerEditor");
-            columns.Bound(c => c.OccurrenceEndDate).Format("{0:dd/MM/yyyy}").EditorTemplateName("DatePickerEditor");
+            columns.Bound(c => c.OccurrenceStartDate).Format("{0:dd/MM/yyyy}");
+            columns.Bound(c => c.OccurrenceEndDate).Format("{0:dd/MM/yyyy}");
             columns.Command(command =>
             {
-                command.Destroy();
                 command.Edit();
+                command.Destroy();
             });
         })
         .ToolBar(toolbar =>
@@ -31,11 +32,25 @@
         .Editable(editable => editable.Mode(GridEditMode.InLine))
         .DataSource(dataSource => dataSource
             .Ajax()
-            .Model(model => model.Id(a => a.Id))
+            .Model(model =>
+            {
+                model.Id(a => a.Id);
+                model.Field(a => a.Employee);
+                model.Field(a => a.Occurrence);
+            })
             .Read(read => read.Action("GetAttendances", "Attendance"))
             .Create(create => create.Action("PostAttendance", "Attendance"))
             .Update(update => update.Action("PutAttendance", "Attendance"))
             .Destroy(destroy => destroy.Action("DeleteAttendance", "Attendance"))
-            )
         )
+    )
 </div>
+
+<script>
+    function onPreCreate(data){
+        if (data === null)
+            return "";
+        else 
+            return data.FullName;
+    }
+</script>

@@ -43,7 +43,6 @@ public class AttendanceController : Controller
     public async Task<IActionResult> PostAttendance([DataSourceRequest] DataSourceRequest request, [FromForm] AttendanceModel model)
     {
         var validationResult = await _validator.ValidateAsync(model);
-        Console.WriteLine(model.OccurrenceEndDate);
         if (validationResult.IsValid == false)
         {
             validationResult.AddToModelState(this.ModelState);
@@ -55,12 +54,12 @@ public class AttendanceController : Controller
         attendanceEntity.SetOccurrenceId(model.Occurrence!.Id);
         attendanceEntity.SetDescription(model.Description);
         attendanceEntity.SetOccurrenceStartDate(DateOnly.FromDateTime(model.OccurrenceStartDate));
-        attendanceEntity.SetOccurrenceEndDate(DateOnly.FromDateTime(model.OccurrenceStartDate));
+        attendanceEntity.SetOccurrenceEndDate(DateOnly.FromDateTime(model.OccurrenceEndDate));
         await _repository.CreateAsync(attendanceEntity);
         await _repository.SaveChangesAsync();
         var attendanceModel = _mapper.Map<AttendanceModel>(attendanceEntity);
-        // attendanceModel.Employee = model.Employee;
-        // attendanceModel.Occurrence = model.Occurrence;
+        attendanceModel.Employee = model.Employee;
+        attendanceModel.Occurrence = model.Occurrence;
         var result = await new List<AttendanceModel> { attendanceModel }.ToDataSourceResultAsync(request);
 
 
@@ -73,11 +72,11 @@ public class AttendanceController : Controller
 
         if (entityToUpdate == null)
             return BadRequest();
-        // entityToUpdate.SetEmployeeId(model.Employee!.Id);
-        // entityToUpdate.SetOccurrenceId(model.Occurrence!.Id);
-        // entityToUpdate.SetDescription(model.Description);
-        // entityToUpdate.SetOccurrenceStartDate(model.OccurrenceStartDate);
-        // entityToUpdate.SetOccurrenceEndDate(model.OccurrenceEndDate);
+        entityToUpdate.SetEmployeeId(model.Employee!.Id);
+        entityToUpdate.SetOccurrenceId(model.Occurrence!.Id);
+        entityToUpdate.SetDescription(model.Description);
+        entityToUpdate.SetOccurrenceStartDate(DateOnly.FromDateTime(model.OccurrenceStartDate));
+        entityToUpdate.SetOccurrenceEndDate(DateOnly.FromDateTime(model.OccurrenceEndDate));
         
         if (await _repository.SaveChangesAsync() == true)
         {

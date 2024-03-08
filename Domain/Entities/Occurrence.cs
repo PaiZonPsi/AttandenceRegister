@@ -7,7 +7,7 @@ namespace Domain.Entities;
 public class Occurrence : BaseEntity
 {
     [NotNull] [MaxLength(200)] 
-    public string Title { get; private set; }
+    public string Title { get; private set; } = string.Empty;
     [NotNull]
     public bool Active { get; private set; }
 
