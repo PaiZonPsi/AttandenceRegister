@@ -46,8 +46,8 @@ public class HomeController : Controller
         if (validationResult.IsValid == false)
         {
             validationResult.AddToModelState(this.ModelState);
-            return ValidationProblem();
-        }
+            var errorResult = await new List<EmployeeModel> { employeeModel }.ToDataSourceResultAsync(request, ModelState);
+            return new ContentResult() {Content = JsonConvert.SerializeObject(errorResult), ContentType = "application/json"};        }
         
         var employeeEntity = new Employee(employeeModel.FirstName, employeeModel.LastName, employeeModel.Email, employeeModel.PhoneNumber);
         var result = await new List<EmployeeModel> { _mapper.Map<EmployeeModel>(employeeEntity) }.ToDataSourceResultAsync(request);

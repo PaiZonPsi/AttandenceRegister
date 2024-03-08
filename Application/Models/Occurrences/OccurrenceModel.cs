@@ -6,8 +6,8 @@ namespace Application.Models.Occurrences;
 public class OccurrenceModel
 {
     public int Id { get; set; }
-    [NotNull] [MaxLength(200)] 
+    [Required] [MaxLength(200)] 
     public string Title { get; set; } = String.Empty;
-    [NotNull]
+    [Required]
     public bool Active { get; set; }
 }
