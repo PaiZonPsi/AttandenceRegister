@@ -7,6 +7,7 @@ using FluentValidation.AspNetCore;
 using Kendo.Mvc.Extensions;
 using Kendo.Mvc.UI;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace AttendanceRegister.Controllers;
 
@@ -28,54 +29,51 @@ public class HomeController : Controller
         return View();
     }
 
-    [AcceptVerbs("Get")]
-    public async Task<IActionResult> GetEmployees([DataSourceRequest]DataSourceRequest request)
+    public async Task<IActionResult> GetEmployees([DataSourceRequest] DataSourceRequest request)
     {
-        var dataSourceResultTask = (await _repository.GetAllAsync()).ToDataSourceResultAsync(request);
-        return Json(await dataSourceResultTask);
+        var employees = await _repository.GetAllAsync();
+        var employeesDtos = _mapper.Map<IEnumerable<EmployeeModel>>(employees);
+        var result = await employeesDtos.ToDataSourceResultAsync(request);
+
+        var serializeObject = JsonConvert.SerializeObject(result);
+        return new ContentResult() {Content = serializeObject, ContentType = "application/json"};
     }
 
-    public async Task<IActionResult> PostEmployee(EmployeeModel employeeModel, [DataSourceRequest] DataSourceRequest request)
+    public async Task<IActionResult> PostEmployee([DataSourceRequest] DataSourceRequest request, [FromForm] EmployeeModel employeeModel)
     {
-        var result = await _validator.ValidateAsync(employeeModel);
+        var validationResult = await _validator.ValidateAsync(employeeModel);
         
-        if (result.IsValid == false)
+        if (validationResult.IsValid == false)
         {
-            result.AddToModelState(this.ModelState);
-        }
+            validationResult.AddToModelState(this.ModelState);
+            var errorResult = await new List<EmployeeModel> { employeeModel }.ToDataSourceResultAsync(request, ModelState);
+            return new ContentResult() {Content = JsonConvert.SerializeObject(errorResult), ContentType = "application/json"};        }
         
-        var employeeEntity = _mapper.Map<Employee>(employeeModel);
+        var employeeEntity = new Employee(employeeModel.FirstName, employeeModel.LastName, employeeModel.Email, employeeModel.PhoneNumber);
+        var result = await new List<EmployeeModel> { _mapper.Map<EmployeeModel>(employeeEntity) }.ToDataSourceResultAsync(request);
         await _repository.CreateAsync(employeeEntity);
         await _repository.SaveChangesAsync();
-        var dataSourceResultTask = (await _repository.GetAllAsync()).ToDataSourceResultAsync(request);
-        return Json(await dataSourceResultTask, ModelState);
+        var serializeObject = JsonConvert.SerializeObject(result);
+        return new ContentResult() {Content = serializeObject, ContentType = "application/json"};
     }
 
-    public async Task<IActionResult> PutEmployee(EmployeeModel employeeModel, [DataSourceRequest] DataSourceRequest request)
+    public async Task<IActionResult> PutEmployee([DataSourceRequest] DataSourceRequest request, [FromForm] EmployeeModel employeeModel)
     {
         var entityToUpdate = await _repository.GetByIdAsync(employeeModel.Id);
 
         if (entityToUpdate == null)
             return BadRequest();
-        
-        _repository.UpdateEntity(_mapper.Map<Employee>(employeeModel));
+        entityToUpdate.SetFirstName(employeeModel.FirstName);
+        entityToUpdate.SetLastName(employeeModel.LastName);
+        entityToUpdate.SetEmail(employeeModel.Email);
+        entityToUpdate.SetPhoneNumber(employeeModel.PhoneNumber);
         
         if (await _repository.SaveChangesAsync() == true)
         {
-            var dataSourceResultTask = (await _repository.GetAllAsync()).ToDataSourceResultAsync(request);
-            return Json(await dataSourceResultTask, ModelState);
+            var dataSourceResult = await new List<EmployeeModel>(){_mapper.Map<EmployeeModel>(entityToUpdate)}.ToDataSourceResultAsync(request);
+            return new ContentResult() {Content = JsonConvert.SerializeObject(dataSourceResult), ContentType = "application/json"};
         }
         
         return BadRequest();
-    }
-
-    public IActionResult Occurrences()
-    {
-        return View();
-    }
-
-    public IActionResult Attendances()
-    {
-        return View();
     }
 }

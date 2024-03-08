@@ -2,6 +2,7 @@
 
 @{
     Layout = "_Layout";
+    ViewData["Title"] = "Occurrences";
 }
 
     <div class="text-center">
@@ -13,22 +14,19 @@
                 columns.Bound(c => c.Id).Hidden();
                 columns.Bound(c => c.Title).Width(300);
                 columns.Bound(c => c.Active).Width(300);
+                columns.Command(command => command.Edit());
             })
             .ToolBar(toolbar =>
             {
                 toolbar.Create();
-                toolbar.Save();
             })
-            .Editable(editable => editable.Mode(GridEditMode.InCell))
+            .Editable(editable => editable.Mode(GridEditMode.InLine))
             .DataSource(dataSource => dataSource
-                .Custom()
-                .Transport(transport =>
-                {
-                    transport.Read(read => read.Action("GetOccurrences", "Occurrence"));
-                    transport.Create(post => post.Action("PostOccurrence", "Occurrence"));
-                    transport.Update(update => update.Action("PutOccurrence", "Occurrence"));
-                })
-                .Schema(schema => schema.Data("Data"))
-                
-            ))
+                .Ajax()
+                .Model(model => model.Id(o => o.Id))
+                .Read(read => read.Action("GetOccurrences", "Occurrence"))
+                .Create(post => post.Action("PostOccurrence", "Occurrence"))
+                .Update(update => update.Action("PutOccurrence", "Occurrence"))
+            )
+        )
     </div>

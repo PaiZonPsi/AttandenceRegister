@@ -1,0 +1,12 @@
+﻿@using Kendo.Mvc.UI
+@model Application.Models.Occurrences.OccurrenceModel
+
+@(Html.Kendo().ComboBoxFor(o => o)
+    .DataValueField("Id")
+    .DataTextField("Title")
+    .Placeholder("Select occurrence...")
+    .DataSource(source => source
+        .Ajax()
+        .Read(read => read.Action("GetOccurrences", "Occurrence"))
+        )
+)

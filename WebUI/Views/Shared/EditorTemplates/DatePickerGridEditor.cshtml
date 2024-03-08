@@ -1,0 +1,9 @@
+﻿@using Kendo.Mvc.UI
+@model DateTime
+
+
+<script type="text/javascript">
+kendo.culture("en-GB");
+</script>
+
+@(Html.Kendo().DatePickerFor(m => m).Value(DateTime.Today))

@@ -1,0 +1,18 @@
+﻿@using Kendo.Mvc.UI
+@using Application.Models.Employees
+@model EmployeeModel
+
+@(Html.Kendo().MultiColumnComboBoxFor<EmployeeModel>(e => e)
+        .DataTextField("FullName")
+        .DataValueField("Id")
+        .Placeholder("Select Employee...")
+        .Columns(column =>
+        {
+            column.Add().Field("FullName").Title("Full Name").Width("300");
+            column.Add().Field("Email").Title("Contact Email").Width("300");
+            column.Add().Field("PhoneNumber").Title("Contact Phone").Width("300");
+        })
+        .DataSource(source => source
+            .Ajax()
+            .Read(read => read.Action("GetEmployees", "Home"))
+        ))

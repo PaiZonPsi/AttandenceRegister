@@ -18,6 +18,7 @@
       <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.9.0-3.final" />
       <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="4.9.0-3.final" />
       <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.9.0-3.final" />
+      <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.Workspaces" Version="4.9.0-3.final" />
       <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.9.0-3.final" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.2" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.2">
