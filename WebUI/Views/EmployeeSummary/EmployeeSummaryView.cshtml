@@ -1,0 +1,52 @@
+﻿@using Kendo.Mvc.UI
+@using Domain.Entities
+
+@{
+    Layout = "_Layout";
+}
+@(Html.Kendo().MultiColumnComboBox()
+    .Name("employees")
+    .DropDownWidth("300")
+    .DataTextField("FullName")
+    .DataValueField("Id")
+    .Events(e => e.Change("onChange"))
+    .Columns(column =>
+    {
+        column.Add().Field("FullName").Title("Full Name").Width("300");
+        column.Add().Field("Email").Title("Contact Email").Width("300");
+        column.Add().Field("PhoneNumber").Title("Contact Phone").Width("300");
+    })
+    .DataSource(source => source
+        .Ajax()
+        .Read(read => read.Action("GetEmployees", "Home"))
+    ))
+
+@(Html.Kendo().Grid<EmployeeSummary>()
+    .Name("summary")
+    .NoRecords(true)
+    .AutoBind(false)
+    .Columns(columns =>
+    {
+        columns.Bound(esm => esm.Year);
+        columns.Bound(esm => esm.EmployeeFullName);
+        columns.Bound(esm => esm.OccurrenceTitle);
+        columns.Bound(esm => esm.AbsentDays);
+    })
+    .DataSource(source =>
+    {
+        source
+            .Ajax()
+            .Read(read => read.Action("GetEmployeeSummary", "EmployeeSummary").Data("getEmployeeId"));
+    }))
+    
+<script type="text/javascript">
+    function getEmployeeId(e){
+        let value = $("#employees").data("kendoMultiColumnComboBox").value();
+        return {employeeId : value};
+    }
+    
+    function onChange(){
+        let grid = $("#summary").data("kendoGrid");
+        grid.dataSource.read();
+    }
+</script>

@@ -14,6 +14,7 @@ public static class InfrastructureDependencyInjection
         services.AddTransient<IEmployeeRepository, EmployeeRepository>();
         services.AddTransient<IAttendanceRepository, AttendanceRepository>();
         services.AddTransient<IOccurrenceRepository, OccurrenceRepository>();
+        services.AddTransient<ISummaryRepository, SummaryRepository>();
         return services;
     }
 }
