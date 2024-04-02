@@ -5,28 +5,49 @@
     ViewData["Title"] = "Occurrences";
 }
 
-    <div class="text-center">
-        <h2>Occurrences</h2>
-        @(Html.Kendo().Grid<Application.Models.Occurrences.OccurrenceModel>()
-            .Name("grid")
-            .Columns(columns =>
-            {
-                columns.Bound(c => c.Id).Hidden();
-                columns.Bound(c => c.Title).Width(300);
-                columns.Bound(c => c.Active).Width(300);
-                columns.Command(command => command.Edit());
-            })
-            .ToolBar(toolbar =>
-            {
-                toolbar.Create();
-            })
-            .Editable(editable => editable.Mode(GridEditMode.InLine))
-            .DataSource(dataSource => dataSource
-                .Ajax()
-                .Model(model => model.Id(o => o.Id))
-                .Read(read => read.Action("GetOccurrences", "Occurrence"))
-                .Create(post => post.Action("PostOccurrence", "Occurrence"))
-                .Update(update => update.Action("PutOccurrence", "Occurrence"))
-            )
+<div class="text-center">
+    <h2>Occurrences</h2>
+    @(Html.Kendo().Grid<Application.Models.Occurrences.OccurrenceModel>()
+        .Name("grid")
+        .Columns(columns =>
+        {
+            columns.Bound(c => c.Id).Hidden();
+            columns.Bound(c => c.Title).Width(300);
+            columns.Bound(c => c.Active).Width(300);
+            columns.Command(command => command.Edit());
+        })
+        .ToolBar(toolbar =>
+        {
+            toolbar.Create();
+        })
+        .Editable(editable => editable.Mode(GridEditMode.InLine))
+        .DataSource(dataSource => dataSource
+            .Ajax()
+            .Model(model => model.Id(o => o.Id))
+            .Read(read => read.Action("GetOccurrences", "Occurrence"))
+            .Create(post => post.Action("PostOccurrence", "Occurrence"))
+            .Update(update => update.Action("PutOccurrence", "Occurrence"))
+            .Events(e => e.Error("onError"))
         )
-    </div>
+    )
+</div>
+<script>
+    function onError(args) {
+        let errors = args.errors;
+        if (errors) {
+            let grid = $("#grid").data("kendoGrid");
+                grid.one("dataBinding", function (e) {
+                    e.preventDefault();
+                    $.each(errors, function (key, value) {
+                        let message = "";
+                        if ('errors' in value) {
+                            $.each(value.errors, function() {
+                                message += this + "\n";
+                            });
+                        }
+                        grid.editable.element.find("[data-valmsg-for='" + key + "']").replaceWith('<div class="k-widget k-tooltip k-tooltip-error" style="width:fit-content"><span class="k-icon k-i-exclamation-circle"> </span>' + message + '<div class="k-callout k-callout-n"></div></div>').show();
+                });
+            });
+        }
+    }
+</script>

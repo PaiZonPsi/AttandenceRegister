@@ -44,6 +44,8 @@ public class OccurrenceController : Controller
         if (validationResult.IsValid == false)
         {
             validationResult.AddToModelState(ModelState);
+            var errorResult = await new List<OccurrenceModel> { occurrenceModel }.ToDataSourceResultAsync(request, ModelState);
+            return new ContentResult() {Content = JsonConvert.SerializeObject(errorResult), ContentType = "application/json"};
         }
 
         var occurrenceEntity = new Occurrence(occurrenceModel.Title, occurrenceModel.Active);
@@ -55,15 +57,24 @@ public class OccurrenceController : Controller
         
     }
 
-    public async Task<ActionResult> PutOccurrence([DataSourceRequest] DataSourceRequest request, [FromForm] OccurrenceModel model)
+    public async Task<ActionResult> PutOccurrence([DataSourceRequest] DataSourceRequest request, [FromForm] OccurrenceModel occurrenceModel)
     {
-        var entityToUpdate = await _repository.GetByIdAsync(model.Id);
+        var validationResult = await _validator.ValidateAsync(occurrenceModel);
+        
+        if (validationResult.IsValid == false)
+        {
+            validationResult.AddToModelState(ModelState);
+            var errorResult = await new List<OccurrenceModel> { occurrenceModel }.ToDataSourceResultAsync(request, ModelState);
+            return new ContentResult() {Content = JsonConvert.SerializeObject(errorResult), ContentType = "application/json"};
+        }
+
+        var entityToUpdate = await _repository.GetByIdAsync(occurrenceModel.Id);
 
         if (entityToUpdate == null)
             return BadRequest();
-        
-        entityToUpdate.SetTitle(model.Title);
-        entityToUpdate.SetActivity(model.Active);
+
+        entityToUpdate.SetTitle(occurrenceModel.Title);
+        entityToUpdate.SetActivity(occurrenceModel.Active);
         await _repository.SaveChangesAsync();
 
         var dataSourceResult = await new List<OccurrenceModel> {_mapper.Map<OccurrenceModel>(entityToUpdate)}.ToDataSourceResultAsync(request);
