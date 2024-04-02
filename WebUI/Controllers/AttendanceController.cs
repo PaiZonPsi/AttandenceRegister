@@ -46,7 +46,8 @@ public class AttendanceController : Controller
         if (validationResult.IsValid == false)
         {
             validationResult.AddToModelState(this.ModelState);
-            return ValidationProblem();
+            var errorResult = await new List<AttendanceModel> { model }.ToDataSourceResultAsync(request, ModelState);
+            return new ContentResult() {Content = JsonConvert.SerializeObject(errorResult), ContentType = "application/json"};
         }
         
         var attendanceEntity = new Attendance();
@@ -68,6 +69,13 @@ public class AttendanceController : Controller
     
     public async Task<IActionResult> PutAttendance([DataSourceRequest] DataSourceRequest request, [FromForm] AttendanceModel model)
     {
+        var validationResult = await _validator.ValidateAsync(model);
+        if (validationResult.IsValid == false)
+        {
+            validationResult.AddToModelState(this.ModelState);
+            var errorResult = await new List<AttendanceModel> { model }.ToDataSourceResultAsync(request, ModelState);
+            return new ContentResult() {Content = JsonConvert.SerializeObject(errorResult), ContentType = "application/json"};
+        }
         var entityToUpdate = await _repository.GetByIdAsync(model.Id);
 
         if (entityToUpdate == null)

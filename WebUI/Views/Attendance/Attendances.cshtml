@@ -42,6 +42,27 @@
             .Create(create => create.Action("PostAttendance", "Attendance"))
             .Update(update => update.Action("PutAttendance", "Attendance"))
             .Destroy(destroy => destroy.Action("DeleteAttendance", "Attendance"))
+            .Events(e => e.Error("onError"))
         )
     )
 </div>
+<script>
+    function onError(args) {
+        let errors = args.errors;
+        if (errors) {
+            let grid = $("#grid").data("kendoGrid");
+                grid.one("dataBinding", function (e) {
+                    e.preventDefault();
+                    $.each(errors, function (key, value) {
+                        let message = "";
+                        if ('errors' in value) {
+                            $.each(value.errors, function() {
+                                message += this + "\n";
+                            });
+                        }
+                        grid.editable.element.find("[data-valmsg-for='" + key + "']").replaceWith('<div class="k-widget k-tooltip k-tooltip-error" style="width:fit-content"><span class="k-icon k-i-exclamation-circle"> </span>' + message + '<div class="k-callout k-callout-n"></div></div>').show();
+                });
+            });
+        }
+    }
+</script>

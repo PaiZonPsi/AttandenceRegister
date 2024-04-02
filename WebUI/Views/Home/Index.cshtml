@@ -1,33 +1,55 @@
-﻿@using Kendo.Mvc.UI
+@using Kendo.Mvc.UI
 
 @{
     ViewData["Title"] = "Employees";
 }
 
-    <div class="text-center">
-        <h2>Employees</h2>
-        @(Html.Kendo().Grid<Application.Models.Employees.EmployeeModel>()
-            .Name("grid")
-            .Columns(columns =>
-            {
-                columns.Bound(c => c.Id).Hidden();
-                columns.Bound(c => c.FirstName).Width(300);
-                columns.Bound(c => c.LastName).Width(300);
-                columns.Bound(c => c.Email).Width(200);
-                columns.Bound(c => c.PhoneNumber).Width(200);
-                columns.Command(command => command.Edit());
-            })
-            .ToolBar(toolbar =>
-            {
-                toolbar.Create();
-            })
-            .Editable(editable => editable.Mode(GridEditMode.InLine))
-            .DataSource(dataSource => dataSource
-                .Ajax()
-                .Model(model => model.Id(e => e.Id))
-                .Read(read => read.Action("GetEmployees", "Home"))
-                .Create(post => post.Action("PostEmployee", "Home"))
-                .Update(update => update.Action("PutEmployee", "Home"))
-                )
-        )
-    </div>
+<div class="text-center">
+    <h2>Employees</h2>
+    @(Html.Kendo().Grid<Application.Models.Employees.EmployeeModel>()
+        .Name("grid")
+        .Columns(columns =>
+        {
+            columns.Bound(c => c.Id).Hidden();
+            columns.Bound(c => c.FirstName).Width(300);
+            columns.Bound(c => c.LastName).Width(300);
+            columns.Bound(c => c.Email).Width(200);
+            columns.Bound(c => c.PhoneNumber).Width(200);
+            columns.Command(command => command.Edit());
+        })
+        .ToolBar(toolbar =>
+        {
+            toolbar.Create();
+        })
+        .Editable(editable => editable.Mode(GridEditMode.InLine))
+        .DataSource(dataSource => dataSource
+            .Ajax()
+            .Model(model => model.Id(e => e.Id))
+            .Read(read => read.Action("GetEmployees", "Home"))
+            .Create(post => post.Action("PostEmployee", "Home"))
+            .Update(update => update.Action("PutEmployee", "Home"))
+            .Events(events => events.Error("onError"))
+        ));
+</div>
+
+
+<script>
+    function onError(args) {
+        let errors = args.errors;
+        if (errors) {
+            let grid = $("#grid").data("kendoGrid");
+                grid.one("dataBinding", function (e) {
+                    e.preventDefault();
+                    $.each(errors, function (key, value) {
+                        let message = "";
+                        if ('errors' in value) {
+                            $.each(value.errors, function() {
+                                message += this + "\n";
+                            });
+                        }
+                        grid.editable.element.find("[data-valmsg-for='" + key + "']").replaceWith('<div class="k-widget k-tooltip k-tooltip-error" style="width:fit-content"><span class="k-icon k-i-exclamation-circle"> </span>' + message + '<div class="k-callout k-callout-n"></div></div>').show();
+                });
+            });
+        }
+    }
+</script>
