@@ -14,7 +14,6 @@ public class EmployeeSummaryController : Controller
         _repository = repository;
     }
     
-    // GET
     public IActionResult EmployeeSummaryView()
     {
         return View();
