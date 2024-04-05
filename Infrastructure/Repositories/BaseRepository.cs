@@ -36,4 +36,9 @@ public abstract class BaseRepository<TEntity> : IRepository<TEntity> where TEnti
     {
         return await _context.SaveChangesAsync() > 0;
     }
+
+    public async Task<bool> EntityExists(int id)
+    {
+        return await _context.Set<TEntity>().Where(e => e.Id == id).FirstOrDefaultAsync() != null;
+    }
 }
