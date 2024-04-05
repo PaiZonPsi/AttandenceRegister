@@ -1,4 +1,6 @@
-﻿using Infrastructure.Repositories;
+﻿using AttendanceRegister.Factories;
+using Infrastructure.Repositories;
+using Infrastructure.Services;
 using Kendo.Mvc.Extensions;
 using Kendo.Mvc.UI;
 using Microsoft.AspNetCore.Mvc;
@@ -9,9 +11,12 @@ namespace AttendanceRegister.Controllers;
 public class EmployeeSummaryController : Controller
 {
     private readonly ISummaryRepository _repository;
-    public EmployeeSummaryController(ISummaryRepository repository)
+    private readonly IContentResultFactory _contentResultFactory;
+    
+    public EmployeeSummaryController(ISummaryRepository repository, IContentResultFactory contentResultFactory)
     {
         _repository = repository;
+        _contentResultFactory = contentResultFactory;
     }
     
     public IActionResult EmployeeSummaryView()
@@ -24,8 +29,6 @@ public class EmployeeSummaryController : Controller
         if (employeeId.HasValue == false)
             return BadRequest();
         var results = _repository.GetSummaryForEmployee(employeeId.Value).ToList();
-        var dataSourceResult = await results.ToDataSourceResultAsync(request);
-        var serializeObject = JsonConvert.SerializeObject(dataSourceResult);
-        return new ContentResult() {Content = serializeObject, ContentType = "application/json"};
+        return await _contentResultFactory.CreateReadOnlyContentResult(results, request);
     }
 }

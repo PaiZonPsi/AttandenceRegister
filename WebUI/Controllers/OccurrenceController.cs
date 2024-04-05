@@ -1,12 +1,12 @@
 using Application.Interfaces.Repository;
+using AttendanceRegister.Factories;
 using AutoMapper;
 using Domain.Entities;
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using Kendo.Mvc.Extensions;
+using Infrastructure.Services;
 using Kendo.Mvc.UI;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using OccurrenceModel = Application.Models.Occurrences.OccurrenceModel;
 
 namespace AttendanceRegister.Controllers;
@@ -16,12 +16,13 @@ public class OccurrenceController : Controller
     private readonly IOccurrenceRepository _repository;
     private readonly IMapper _mapper;
     private readonly IValidator<OccurrenceModel> _validator;
-
-    public OccurrenceController(IOccurrenceRepository repository, IMapper mapper, IValidator<OccurrenceModel> validator)
+    private readonly IContentResultFactory _contentResultFactory;
+    public OccurrenceController(IOccurrenceRepository repository, IMapper mapper, IValidator<OccurrenceModel> validator, IContentResultFactory contentResultFactory)
     {
         _repository = repository;
         _mapper = mapper;
         _validator = validator;
+        _contentResultFactory = contentResultFactory;
     }
     
     public IActionResult Occurrences()
@@ -33,8 +34,7 @@ public class OccurrenceController : Controller
     {
         var occurrences = await _repository.GetAllAsync();
         var employeesDtos = _mapper.Map<IEnumerable<OccurrenceModel>>(occurrences);
-        var dataSourceResult = await employeesDtos.ToDataSourceResultAsync(request);
-        return new ContentResult() {Content = JsonConvert.SerializeObject(dataSourceResult), ContentType = "application/json"};
+        return await _contentResultFactory.CreateReadOnlyContentResult(employeesDtos, request);
     }
 
     public async Task<ActionResult> PostOccurrence([DataSourceRequest] DataSourceRequest request, [FromForm] OccurrenceModel occurrenceModel)
@@ -44,17 +44,14 @@ public class OccurrenceController : Controller
         if (validationResult.IsValid == false)
         {
             validationResult.AddToModelState(ModelState);
-            var errorResult = await new List<OccurrenceModel> { occurrenceModel }.ToDataSourceResultAsync(request, ModelState);
-            return new ContentResult() {Content = JsonConvert.SerializeObject(errorResult), ContentType = "application/json"};
+            return await _contentResultFactory.CreateContentResult(occurrenceModel, request, ModelState);
         }
 
         var occurrenceEntity = new Occurrence(occurrenceModel.Title, occurrenceModel.Active);
         await _repository.CreateAsync(occurrenceEntity);
         await _repository.SaveChangesAsync();
-        var dataSourceResult = await new List<OccurrenceModel> {_mapper.Map<OccurrenceModel>(occurrenceEntity)}.ToDataSourceResultAsync(request);
-        return new ContentResult()
-            { Content = JsonConvert.SerializeObject(dataSourceResult), ContentType = "application/json" };
-        
+        return await _contentResultFactory
+            .CreateContentResult(_mapper.Map<OccurrenceModel>(occurrenceEntity), request, ModelState);
     }
 
     public async Task<ActionResult> PutOccurrence([DataSourceRequest] DataSourceRequest request, [FromForm] OccurrenceModel occurrenceModel)
@@ -64,8 +61,7 @@ public class OccurrenceController : Controller
         if (validationResult.IsValid == false)
         {
             validationResult.AddToModelState(ModelState);
-            var errorResult = await new List<OccurrenceModel> { occurrenceModel }.ToDataSourceResultAsync(request, ModelState);
-            return new ContentResult() {Content = JsonConvert.SerializeObject(errorResult), ContentType = "application/json"};
+            return await _contentResultFactory.CreateContentResult(occurrenceModel, request, ModelState);
         }
 
         var entityToUpdate = await _repository.GetByIdAsync(occurrenceModel.Id);
@@ -76,10 +72,7 @@ public class OccurrenceController : Controller
         entityToUpdate.SetTitle(occurrenceModel.Title);
         entityToUpdate.SetActivity(occurrenceModel.Active);
         await _repository.SaveChangesAsync();
-
-        var dataSourceResult = await new List<OccurrenceModel> {_mapper.Map<OccurrenceModel>(entityToUpdate)}.ToDataSourceResultAsync(request);
-        return new ContentResult()
-            { Content = JsonConvert.SerializeObject(dataSourceResult), ContentType = "application/json" };
-
+        return await _contentResultFactory
+            .CreateContentResult(_mapper.Map<OccurrenceModel>(entityToUpdate), request, ModelState);
     }
 }

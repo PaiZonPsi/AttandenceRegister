@@ -1,13 +1,13 @@
 using Application.Interfaces.Repository;
 using Application.Models.Attendances;
+using AttendanceRegister.Factories;
 using AutoMapper;
 using Domain.Entities;
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using Kendo.Mvc.Extensions;
+using Infrastructure.Services;
 using Kendo.Mvc.UI;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace AttendanceRegister.Controllers;
 
@@ -16,13 +16,14 @@ public class AttendanceController : Controller
     private readonly IAttendanceRepository _repository;
     private readonly IMapper _mapper;
     private readonly IValidator<AttendanceModel> _validator;
-
+    private readonly IContentResultFactory _contentResultFactory;
     public AttendanceController(IAttendanceRepository repository, IMapper mapper,
-        IValidator<AttendanceModel> validator)
+        IValidator<AttendanceModel> validator, IContentResultFactory contentResultFactory)
     {
         _repository = repository;
         _mapper = mapper;
         _validator = validator;
+        _contentResultFactory = contentResultFactory;
     }
 
     public IActionResult Attendances()
@@ -34,10 +35,7 @@ public class AttendanceController : Controller
     {
         var attendances = await _repository.GetAllAsync();
         var attendancesDtos = _mapper.Map<IEnumerable<AttendanceModel>>(attendances);
-        var result = await attendancesDtos.ToDataSourceResultAsync(request);
-
-        var serializeObject = JsonConvert.SerializeObject(result);
-        return new ContentResult() {Content = serializeObject, ContentType = "application/json"};
+        return await _contentResultFactory.CreateReadOnlyContentResult(attendancesDtos, request);
     }
 
     public async Task<IActionResult> PostAttendance([DataSourceRequest] DataSourceRequest request, [FromForm] AttendanceModel model)
@@ -46,8 +44,7 @@ public class AttendanceController : Controller
         if (validationResult.IsValid == false)
         {
             validationResult.AddToModelState(this.ModelState);
-            var errorResult = await new List<AttendanceModel> { model }.ToDataSourceResultAsync(request, ModelState);
-            return new ContentResult() {Content = JsonConvert.SerializeObject(errorResult), ContentType = "application/json"};
+            return await _contentResultFactory.CreateContentResult(model, request, ModelState);
         }
         
         var attendanceEntity = new Attendance();
@@ -61,10 +58,7 @@ public class AttendanceController : Controller
         var attendanceModel = _mapper.Map<AttendanceModel>(attendanceEntity);
         attendanceModel.Employee = model.Employee;
         attendanceModel.Occurrence = model.Occurrence;
-        var result = await new List<AttendanceModel> { attendanceModel }.ToDataSourceResultAsync(request);
-
-
-        return new ContentResult() {Content = JsonConvert.SerializeObject(result), ContentType = "application/json"};
+        return await _contentResultFactory.CreateContentResult(attendanceModel, request, ModelState);
     }
     
     public async Task<IActionResult> PutAttendance([DataSourceRequest] DataSourceRequest request, [FromForm] AttendanceModel model)
@@ -73,8 +67,7 @@ public class AttendanceController : Controller
         if (validationResult.IsValid == false)
         {
             validationResult.AddToModelState(this.ModelState);
-            var errorResult = await new List<AttendanceModel> { model }.ToDataSourceResultAsync(request, ModelState);
-            return new ContentResult() {Content = JsonConvert.SerializeObject(errorResult), ContentType = "application/json"};
+            return await _contentResultFactory.CreateContentResult(model, request, ModelState);
         }
         var entityToUpdate = await _repository.GetByIdAsync(model.Id);
 
@@ -88,9 +81,8 @@ public class AttendanceController : Controller
         
         if (await _repository.SaveChangesAsync() == true)
         {
-            var dataSourceResult = await new List<AttendanceModel>(){_mapper.Map<AttendanceModel>(entityToUpdate)}.ToDataSourceResultAsync(request);
-            return new ContentResult() {Content = JsonConvert
-                .SerializeObject(dataSourceResult), ContentType = "application/json"};
+            return await _contentResultFactory
+                .CreateContentResult(_mapper.Map<AttendanceModel>(entityToUpdate), request, ModelState);
         }
         
         return BadRequest();
@@ -109,7 +101,7 @@ public class AttendanceController : Controller
             return BadRequest();
         }
 
-        var dataSourceResultTask = (await _repository.GetAllAsync()).ToDataSourceResultAsync(request);
-        return Json(await dataSourceResultTask);
+        var attendances = await _repository.GetAllAsync();
+        return await _contentResultFactory.CreateReadOnlyContentResult(attendances, request);
     }
 }
