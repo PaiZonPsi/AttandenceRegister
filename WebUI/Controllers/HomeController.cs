@@ -1,4 +1,3 @@
-using Application.Interfaces.Repository;
 using Application.Interfaces.Services;
 using Application.Models.Employees;
 using AttendanceRegister.Factories;
@@ -14,19 +13,16 @@ namespace AttendanceRegister.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly IEmployeeRepository _repository;
     private readonly IMapper _mapper;
     private readonly IValidator<EmployeeModel> _validator;
     private readonly IContentResultFactory _contentResultFactory;
     private readonly IEmployeeService _employeeService;
 
-    public HomeController(IEmployeeRepository repository,
-        IMapper mapper,
+    public HomeController(IMapper mapper,
         IValidator<EmployeeModel> validator,
         IContentResultFactory contentResultFactory,
         IEmployeeService employeeService)
     {
-        _repository = repository;
         _mapper = mapper;
         _validator = validator;
         _contentResultFactory = contentResultFactory;
@@ -57,7 +53,7 @@ public class HomeController : Controller
 
         var employee = await _employeeService.Create(employeeModel);
         return await _contentResultFactory
-            .CreateContentResult(_mapper.Map<EmployeeModel>(employee), request, ModelState);
+            .CreateContentResult(employee, request, ModelState);
     }
 
     public async Task<IActionResult> PutEmployee([DataSourceRequest] DataSourceRequest request,
@@ -71,7 +67,7 @@ public class HomeController : Controller
             return await _contentResultFactory.CreateContentResult(employeeModel, request, ModelState);
         }
 
-        if (await _repository.EntityExists(employeeModel.Id) == false)
+        if (await _employeeService.Exists(employeeModel.Id) == false)
             return BadRequest();
         var updatedModel = await _employeeService.Update(employeeModel);
         return await _contentResultFactory.CreateContentResult(updatedModel,

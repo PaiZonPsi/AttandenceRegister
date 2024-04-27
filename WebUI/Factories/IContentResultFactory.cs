@@ -11,6 +11,6 @@ public interface IContentResultFactory
 
     Task<ContentResult> CreateContentResult<T>(IEnumerable<T> collection, DataSourceRequest request,
         ModelStateDictionary modelState);
-
+ 
     Task<ContentResult> CreateReadOnlyContentResult<T>(IEnumerable<T> collection, DataSourceRequest request);
 }

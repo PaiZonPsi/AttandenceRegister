@@ -42,4 +42,9 @@ public class EmployeeService : IEmployeeService
         await _repository.SaveChangesAsync();
         return _mapper.Map<EmployeeModel>(entityToUpdate);
     }
+
+    public async Task<bool> Exists(int id)
+    {
+        return await _repository.EntityExists(id);
+    }
 }
