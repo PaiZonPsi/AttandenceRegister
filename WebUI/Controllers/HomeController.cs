@@ -1,7 +1,6 @@
 using Application.Interfaces.Services;
 using Application.Models.Employees;
 using AttendanceRegister.Factories;
-using AutoMapper;
 using Domain.Entities;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -13,17 +12,14 @@ namespace AttendanceRegister.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly IMapper _mapper;
     private readonly IValidator<EmployeeModel> _validator;
     private readonly IContentResultFactory _contentResultFactory;
     private readonly IEmployeeService _employeeService;
 
-    public HomeController(IMapper mapper,
-        IValidator<EmployeeModel> validator,
+    public HomeController(IValidator<EmployeeModel> validator,
         IContentResultFactory contentResultFactory,
         IEmployeeService employeeService)
     {
-        _mapper = mapper;
         _validator = validator;
         _contentResultFactory = contentResultFactory;
         _employeeService = employeeService;

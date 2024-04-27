@@ -1,7 +1,4 @@
-using Application.Interfaces.Repository;
 using AttendanceRegister.Factories;
-using AutoMapper;
-using Domain.Entities;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Infrastructure.Services;
