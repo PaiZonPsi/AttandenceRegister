@@ -1,10 +1,8 @@
 using Application.Interfaces.Services;
 using Application.Models.Employees;
 using AttendanceRegister.Factories;
-using Domain.Entities;
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using Infrastructure.Services;
 using Kendo.Mvc.UI;
 using Microsoft.AspNetCore.Mvc;
 

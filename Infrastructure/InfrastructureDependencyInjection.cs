@@ -22,6 +22,8 @@ public static class InfrastructureDependencyInjection
     private static void RegisterServices(IServiceCollection services)
     {
         services.AddTransient<IEmployeeService, EmployeeService>();
+        services.AddTransient<IOccurrenceService, OccurrenceService>();
+        services.AddTransient<IAttendanceRegisterService, AttendanceRegisterService>();
     }
 
     private static void RegisterRepositories(IServiceCollection services)
