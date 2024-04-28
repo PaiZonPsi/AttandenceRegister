@@ -1,4 +1,5 @@
 ﻿using Application.Interfaces.Repository;
+using Application.Interfaces.Services;
 using Application.Models.Occurrences;
 using AutoMapper;
 using Domain.Entities;
@@ -44,12 +45,4 @@ public class OccurrenceService : IOccurrenceService
     {
         return await _repository.EntityExists(id);
     }
-}
-
-public interface IOccurrenceService
-{
-    Task<IEnumerable<OccurrenceModel>> GetAll();
-    Task<OccurrenceModel> Create(OccurrenceModel model);
-    Task<OccurrenceModel> Update(OccurrenceModel model);
-    Task<bool> Exists(int id);
 }

@@ -1,6 +1,6 @@
 ﻿using Domain.Common;
 
-namespace Application.Interfaces.Repository;
+namespace Application.Common;
 
 public interface IRepository<TEntity> where TEntity : BaseEntity
 {

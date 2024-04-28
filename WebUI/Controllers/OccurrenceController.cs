@@ -1,3 +1,4 @@
+using Application.Interfaces.Services;
 using AttendanceRegister.Factories;
 using FluentValidation;
 using FluentValidation.AspNetCore;

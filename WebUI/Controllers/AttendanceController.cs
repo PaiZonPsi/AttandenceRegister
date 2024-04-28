@@ -1,3 +1,4 @@
+using Application.Interfaces.Services;
 using Application.Models.Attendances;
 using AttendanceRegister.Factories;
 using FluentValidation;

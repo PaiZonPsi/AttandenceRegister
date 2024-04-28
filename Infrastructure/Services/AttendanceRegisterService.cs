@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using Application.Interfaces.Repository;
+using Application.Interfaces.Services;
 using Application.Models.Attendances;
 using Application.Models.Employees;
 using AutoMapper;
@@ -63,13 +64,4 @@ public class AttendanceRegisterService : IAttendanceRegisterService
     {
         return await _repository.EntityExists(id);
     }
-}
-
-public interface IAttendanceRegisterService
-{
-    Task<IEnumerable<AttendanceModel>> GetAll();
-    Task<AttendanceModel> Create(AttendanceModel model);
-    Task<AttendanceModel> Update(AttendanceModel model);
-    Task Delete(AttendanceModel model);
-    Task<bool> Exists(int id);
 }
