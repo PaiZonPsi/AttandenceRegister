@@ -1,4 +1,6 @@
-﻿namespace Application.Interfaces.Repository;
+﻿using Application.Common;
+
+namespace Application.Interfaces.Repository;
 
 public interface IOccurrenceRepository : IRepository<Domain.Entities.Occurrence>
 {
